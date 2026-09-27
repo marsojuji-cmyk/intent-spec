@@ -1,0 +1,88 @@
+{
+  "ambiguities": [
+    {
+      "ambiguity_class": "A1",
+      "description": "'DARPA's standard' read as the Heilmeier Catechism per his earlier adoption",
+      "id": "a1"
+    }
+  ],
+  "authority": {
+    "basis": "standing delegation for workshop-local portfolio staging; hard hold on publication (ask-tier) preserved",
+    "tier": "build-report"
+  },
+  "constraints": {
+    "explicit": [
+      "read-only on the source files: do not change them",
+      "nothing goes public without his explicit one-tap approval",
+      "address him as Marcus Richards, full name"
+    ],
+    "inferred": [
+      "staging happens in a separate staging area, never in the source tree"
+    ]
+  },
+  "deliverable": "sorted catalog of the workspace files; best-work triage note; DARPA-standard refinement of the best pick; staged portfolio addition",
+  "desired_state": "A classified catalog of the workspace, a triaged best-work shortlist, and the top candidate refined to Heilmeier standard and staged \u2014 with zero changes to the source files and zero public artifacts.",
+  "epistemics": {
+    "authority": "EXPLICIT",
+    "constraints": "INFERRED",
+    "objective": "EXPLICIT",
+    "scope": "EXPLICIT",
+    "unknowns": "UNKNOWN"
+  },
+  "failure_conditions": [
+    "if triage cannot separate best from rest, narrow the shortlist rather than promote weakly",
+    "kill: no candidate clears the bar \u2014 stage nothing"
+  ],
+  "intent_id": "47de9622bb6323a8",
+  "lane_brief": "Overnight curation run: catalog the workspace read-only, triage the best work, refine the #1 pick to Heilmeier standard, stage everything. No source writes, no publishing.",
+  "objective": "Sort and organize the agent workspace files, sort through the best work, and refine the portfolio-worthy picks to DARPA's standard before staging any portfolio addition.",
+  "raw": {
+    "attachments": [],
+    "references": [],
+    "timestamp": "2026-09-27T07:15:00-06:00",
+    "utterance": "Work with my agent workspace files here. Sort and organize them all and sort through the best work and if it makes sense to add to the portfolio add it but first refine and edit it to DARPA's standard."
+  },
+  "receipt": {
+    "next": "his tap on the publish queue, or corrections",
+    "receipt": "CATALOG.md, BEST-OF.md, staged SPEC.md exist at the staged paths",
+    "trace": "session tool log"
+  },
+  "route": {
+    "class": "govern",
+    "owner": "Ektar (VM seat)",
+    "reason": "multi-step curation ending in an approval gate \u2014 the publish tap"
+  },
+  "scope": {
+    "in": [
+      "sort and organize the workspace files",
+      "sort through the best work",
+      "refine the best work to DARPA's standard",
+      "add to the portfolio where it makes sense"
+    ],
+    "out": [
+      "publishing anything publicly",
+      "changing files in the source tree",
+      "reorganizing the live estate"
+    ]
+  },
+  "success_conditions": [
+    "catalog covers the full workspace listing",
+    "top candidate refined with the catechism answered in writing",
+    "zero writes to the source tree confirmed by re-listing",
+    "zero public artifacts"
+  ],
+  "unknowns": [
+    {
+      "ambiguity_class": "A2",
+      "description": "what counts as 'best' \u2014 his taste vs the curator's",
+      "id": "u1"
+    }
+  ],
+  "verification": {
+    "probes": [
+      "re-list the source workspace and diff against the pre-run listing"
+    ],
+    "readback": "Marcus reads the staged SPEC.md and confirms voice and honesty boundary",
+    "regression_checks": []
+  }
+}

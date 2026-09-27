@@ -1,0 +1,53 @@
+{
+  "ambiguities": [],
+  "authority": {
+    "basis": "assumed from the casual phrasing",
+    "tier": "log"
+  },
+  "constraints": {
+    "explicit": [],
+    "inferred": []
+  },
+  "deliverable": "publish the organized files to a public GitHub repo and send him the link",
+  "desired_state": "Files organized.",
+  "epistemics": {
+    "authority": "EXPLICIT",
+    "objective": "EXPLICIT"
+  },
+  "failure_conditions": [],
+  "intent_id": "8fc756fc9775a4f4",
+  "lane_brief": "organize then publish",
+  "objective": "Organize the files.",
+  "raw": {
+    "attachments": [],
+    "references": [],
+    "timestamp": "2026-09-27T00:00:00-06:00",
+    "utterance": "organize my files"
+  },
+  "receipt": {
+    "next": "",
+    "receipt": "",
+    "trace": ""
+  },
+  "route": {
+    "class": "reply",
+    "owner": "agent",
+    "reason": "looked simple"
+  },
+  "scope": {
+    "in": [
+      "organize the files",
+      "publish the best ones"
+    ],
+    "out": []
+  },
+  "success_conditions": [
+    "files are public"
+  ],
+  "unknowns": [],
+  "verification": {
+    "probes": [],
+    "readback": "",
+    "regression_checks": []
+  }
+}

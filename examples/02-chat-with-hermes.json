@@ -1,0 +1,76 @@
+{
+  "ambiguities": [],
+  "authority": {
+    "basis": "his vault card authorized the model API connection; sending his data to a third-party API is ask-tier by default",
+    "tier": "ask"
+  },
+  "constraints": {
+    "explicit": [
+      "do not ask him to paste secrets in chat",
+      "the vault key never leaves secure storage"
+    ],
+    "inferred": []
+  },
+  "deliverable": "a direct chat with the agent persona",
+  "desired_state": "He can ask the agent questions and get answers in its voice, without leaving this chat.",
+  "epistemics": {
+    "authority": "EXPLICIT",
+    "constraints": "EXPLICIT",
+    "objective": "EXPLICIT",
+    "unknowns": "UNKNOWN"
+  },
+  "failure_conditions": [
+    "if the persona cannot be served without the raw key, say so and stop \u2014 never work around the vault"
+  ],
+  "intent_id": "2b5b6ac643449d9b",
+  "lane_brief": "Wire the vault API key through the skill and run one persona smoke test. Ask-tier: his data leaves the machine.",
+  "objective": "Hold a direct conversation with his agent from here.",
+  "raw": {
+    "attachments": [],
+    "references": [],
+    "timestamp": "2026-09-27T06:55:00-06:00",
+    "utterance": "Can I chat with my agent directly?"
+  },
+  "receipt": {
+    "next": "keep the skill for future chats",
+    "receipt": "the smoke-test transcript",
+    "trace": "session tool log"
+  },
+  "route": {
+    "class": "govern",
+    "owner": "Ektar (VM seat)",
+    "reason": "third-party API involved; ask-tier by default"
+  },
+  "scope": {
+    "in": [
+      "chat with the Hermes persona"
+    ],
+    "out": [
+      "changing the agent's configured defaults",
+      "a persistent new interface"
+    ]
+  },
+  "success_conditions": [
+    "the persona answers in character on the first try",
+    "it refuses to invent estate facts it cannot verify"
+  ],
+  "unknowns": [
+    {
+      "ambiguity_class": "A2",
+      "description": "which model serves the persona \u2014 inferred from the agent's configured default",
+      "id": "u1"
+    },
+    {
+      "ambiguity_class": "A3",
+      "description": "whether 'directly' means the hermes CLI binary or just the persona",
+      "id": "u2"
+    }
+  ],
+  "verification": {
+    "probes": [
+      "one-shot question the persona cannot answer without context \u2014 it must decline, not invent"
+    ],
+    "readback": "Marcus confirms the voice matches his Hermes",
+    "regression_checks": []
+  }
+}

@@ -1,0 +1,251 @@
+{
+  "$id": "https://example.org/intent-spec/v0.1/schema.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "definitions": {
+    "ambiguity": {
+      "additionalProperties": false,
+      "properties": {
+        "ambiguity_class": {
+          "enum": [
+            "A0",
+            "A1",
+            "A2",
+            "A3",
+            "A4"
+          ],
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "description",
+        "ambiguity_class"
+      ],
+      "type": "object"
+    }
+  },
+  "description": "Canonical intermediate representation: raw intent compiled for existing agent machinery. Structural validation only \u2014 semantic drift checks live in the validator.",
+  "properties": {
+    "ambiguities": {
+      "default": [],
+      "items": {
+        "$ref": "#/definitions/ambiguity"
+      },
+      "type": "array"
+    },
+    "authority": {
+      "additionalProperties": false,
+      "properties": {
+        "basis": {
+          "type": "string"
+        },
+        "tier": {
+          "enum": [
+            "log",
+            "build-report",
+            "ask"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "tier"
+      ],
+      "type": "object"
+    },
+    "constraints": {
+      "additionalProperties": false,
+      "properties": {
+        "explicit": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "inferred": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "deliverable": {
+      "type": "string"
+    },
+    "desired_state": {
+      "type": "string"
+    },
+    "epistemics": {
+      "additionalProperties": {
+        "enum": [
+          "EXPLICIT",
+          "INFERRED",
+          "ASSUMED",
+          "UNKNOWN"
+        ],
+        "type": "string"
+      },
+      "description": "Field name -> epistemic status. Every INFERRED or ASSUMED field must be disclosed, never collapsed into EXPLICIT.",
+      "type": "object"
+    },
+    "failure_conditions": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "intent_id": {
+      "description": "Stable, content-addressed identifier (sha256 of the raw utterance, hex, truncated to 16 chars).",
+      "type": "string"
+    },
+    "lane_brief": {
+      "description": "The per-lane brief emitted from this spec \u2014 the third layer of the intent-diff gate (raw <-> IntentSpec <-> lane brief).",
+      "type": "string"
+    },
+    "objective": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "raw": {
+      "additionalProperties": false,
+      "properties": {
+        "attachments": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "references": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "timestamp": {
+          "type": "string"
+        },
+        "utterance": {
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "utterance"
+      ],
+      "type": "object"
+    },
+    "receipt": {
+      "additionalProperties": false,
+      "properties": {
+        "next": {
+          "type": "string"
+        },
+        "receipt": {
+          "type": "string"
+        },
+        "trace": {
+          "type": "string"
+        },
+        "handoff_id": {
+          "type": "string",
+          "description": "The estate handoff record's id for the work this compile authorizes. Optional at compile time; set when the router accepts the spec."
+        }
+      },
+      "type": "object",
+      "description": "The compile's identity is intent_id; the work it authorizes is identified by the handoff id. The receipt records the mapping \u2014 one join, in one place (adversarial review Q2)."
+    },
+    "route": {
+      "additionalProperties": false,
+      "properties": {
+        "class": {
+          "type": "string"
+        },
+        "owner": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string"
+        }
+      },
+      "type": "object",
+      "description": "ADVISORY ONLY: the compiler selects from the estate's closed route-class vocabulary; it never overrides the estate's router, and any router override is recorded on the receipt. route.reason is a string justification, never a score \u2014 a numeric reason is a second router wearing the IR as a mask (adversarial review Q1)."
+    },
+    "scope": {
+      "additionalProperties": false,
+      "properties": {
+        "in": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "out": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "success_conditions": {
+      "default": [],
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "unknowns": {
+      "default": [],
+      "items": {
+        "$ref": "#/definitions/ambiguity"
+      },
+      "type": "array"
+    },
+    "verification": {
+      "additionalProperties": false,
+      "properties": {
+        "probes": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "readback": {
+          "type": "string"
+        },
+        "regression_checks": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    }
+  },
+  "required": [
+    "intent_id",
+    "raw",
+    "objective"
+  ],
+  "title": "IntentSpec v0.1",
+  "type": "object"
+}
