@@ -1,0 +1,125 @@
+name: Claims integrity
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  claims:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify markdown claims
+        run: python3 <<'PY'
+import re
+import sys
+from pathlib import Path
+
+ROOT = Path(".").resolve()
+MD_LINK = re.compile(r"!?\[[^\]]*\]\(([^)]+)\)")
+BACKTICK_PATH = re.compile(
+    r"`((?:[a-zA-Z0-9_.-]+/)+[a-zA-Z0-9_../-]+(?:\.[a-zA-Z0-9]+)?)`"
+)
+CODE_PATH = re.compile(
+    r"(?:^|\s)((?:[a-zA-Z0-9_.-]+/)+[a-zA-Z0-9_.-]+\.(?:py|json|md|sh|yaml|yml))(?:\s|$|#)"
+)
+SECRET_PATTERNS = [
+    (re.compile(r"AKIA[0-9A-Z]{16}"), "AWS access key id"),
+    (re.compile(r"ghp_[A-Za-z0-9]{20,}"), "GitHub personal access token"),
+    (re.compile(r"\bsk-[A-Za-z0-9]{20,}\b"), "OpenAI-style API key"),
+    (re.compile(r"xox[bap]-[A-Za-z0-9-]{10,}"), "Slack token"),
+    (re.compile(r"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----"), "PEM private key"),
+]
+
+
+def is_external_href(href: str) -> bool:
+    h = href.strip()
+    if not h or h.startswith("#"):
+        return True
+    lower = h.lower()
+    return lower.startswith(("http://", "https://", "mailto:"))
+
+
+def resolve_href(href: str, source: Path) -> Path:
+    target = (source.parent / href.split("#", 1)[0]).resolve()
+    try:
+        target.relative_to(ROOT)
+    except ValueError:
+        raise FileNotFoundError(f"link leaves repository: {href}")
+    return target
+
+
+def path_exists(target: Path) -> bool:
+    return target.is_file() or target.is_dir()
+
+
+def check_repo_path(rel: str, context: str, errors: list[str]) -> None:
+    if rel.startswith("~") or rel.startswith("http"):
+        return
+    if ".." in Path(rel).parts:
+        return
+    target = (ROOT / rel).resolve()
+    try:
+        target.relative_to(ROOT)
+    except ValueError:
+        errors.append(f"{context}: path leaves repository: {rel}")
+        return
+    if not path_exists(target):
+        errors.append(f"{context}: missing path: {rel}")
+
+
+def scan_markdown(md_path: Path, errors: list[str]) -> None:
+    text = md_path.read_text(encoding="utf-8")
+    for pat, label in SECRET_PATTERNS:
+        if pat.search(text):
+            errors.append(f"{md_path}: possible secret ({label})")
+
+    for match in MD_LINK.finditer(text):
+        href = match.group(1).strip()
+        if is_external_href(href):
+            continue
+        try:
+            target = resolve_href(href, md_path)
+        except FileNotFoundError as exc:
+            errors.append(f"{md_path}: {exc}")
+            continue
+        if not path_exists(target):
+            errors.append(f"{md_path}: broken link -> {href}")
+
+    for match in BACKTICK_PATH.finditer(text):
+        check_repo_path(match.group(1), str(md_path), errors)
+
+    fence = None
+    for line in text.splitlines():
+        if line.startswith("```"):
+            lang = line[3:].strip().lower()
+            if fence is None:
+                fence = lang if lang else "text"
+            else:
+                fence = None
+            continue
+        if fence not in ("bash", "sh", "shell", "zsh", ""):
+            continue
+        for match in CODE_PATH.finditer(line):
+            check_repo_path(match.group(1), f"{md_path} (code)", errors)
+
+
+def main() -> int:
+    errors: list[str] = []
+    for md_path in sorted(ROOT.rglob("*.md")):
+        if ".git" in md_path.parts:
+            continue
+        scan_markdown(md_path, errors)
+    if errors:
+        print("Claims integrity check FAILED:", file=sys.stderr)
+        for err in errors:
+            print(f"  - {err}", file=sys.stderr)
+        return 1
+    print("Claims integrity check passed.")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
+PY
