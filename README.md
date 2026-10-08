@@ -14,6 +14,42 @@ already decides. It has exactly one output of consequence: a typed
 authority tiers, review lanes, handoff record, receipt. Compile to the
 router. Never become a router.
 
+## Architecture
+
+The compiler and validator sit strictly between raw human intent and existing estate machinery — enforcing structural schema rules and catching drift before execution begins:
+
+```mermaid
+flowchart TD
+    subgraph S1 ["1. Raw Operator Intent"]
+        A["Natural language utterance: task, context, instructions"]
+    end
+
+    subgraph S2 ["2. Intent Spec Validation"]
+        B["Structural checks: schema fields, required vocabularies"]
+        C["Intent-diff gate: heuristic drift and escalation detection"]
+        B --> C
+    end
+
+    subgraph S3 ["3. Compiled IR"]
+        D["IntentSpec: typed contract (objective, explicit vs. inferred constraints, scope, authority, epistemics)"]
+    end
+
+    subgraph S4 ["4. Target Agent Machinery"]
+        E["Router (advisory lane assignment)"]
+        F["Authority tiers (log / build-report / ask)"]
+        G["Review lanes (conductor, adversary, builder)"]
+        H["Handoff records and outcome receipts"]
+    end
+
+    A --> B
+    C -->|PASS: exit 0| D
+    C -.->|FAIL: exit 1| R["Compilation halted (drift or malformed spec rejected)"]
+    D --> E
+    D --> F
+    D --> G
+    D --> H
+```
+
 ## What it guarantees
 
 - **One output of consequence: a typed spec.** The IR is defined in `intent_spec.schema.json` (JSON Schema draft-07). The dependency-free validator does not load the schema file. It re-implements the structural checks in Python.
